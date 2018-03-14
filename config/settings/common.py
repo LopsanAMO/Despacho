@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'rest_auth',
     'corsheaders',
+    'django_nose'
 ]
 
 REST_FRAMEWORK = {
@@ -189,3 +190,12 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 REST_USE_JWT = True
 
 SITE_ID = 2
+
+# Use nose to run all tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=users',
+]

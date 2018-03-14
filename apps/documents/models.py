@@ -4,8 +4,16 @@ from users.models import User
 
 
 class UserClient(models.Model):
-    name = models.CharField(blank=True, max_length=100)
-    created = models.DateTimeField(blank=True, default=datetime.now)
+    name = models.CharField(
+        verbose_name='Nombre del Cliente',
+        blank=True,
+        max_length=150
+    )
+    created = models.DateTimeField(
+        verbose_name='Fecha de creacion',
+        blank=True,
+        auto_now_add=True
+    )
 
     def __str__(self):
         return "{}".format(self.name)
@@ -16,9 +24,22 @@ class UserClient(models.Model):
 
 
 class FolderClient(models.Model):
-    user = models.OneToOneField(UserClient, on_delete=models.CASCADE)
-    name = models.CharField(blank=True, max_length=100)
-    created = models.DateTimeField(blank=True, default=datetime.now)
+    user = models.OneToOneField(
+        UserClient,
+        verbose_name='Cliente',
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(
+        verbose_name='Nombre de Folder',
+        blank=True,
+        max_length=150
+    )
+    created = models.DateTimeField(
+        verbose_name='Fecha de creacion',
+        blank=True,
+        auto_now_add=True
+    )
 
     @property
     def folder_name(self):
@@ -33,9 +54,20 @@ class FolderClient(models.Model):
 
 
 class UserClientModification(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_folder = models.ForeignKey(FolderClient, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User,
+        verbose_name='Usuario',
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    user_folder = models.ForeignKey(
+        FolderClient,
+        verbose_name='Folder de usuario',
+        blank=True,
+        on_delete=models.CASCADE
+    )
     updated = models.DateTimeField(
+        verbose_name='Fecha de modificacion',
         blank=True,
         auto_now_add=True
     )
@@ -49,9 +81,22 @@ class UserClientModification(models.Model):
 
 
 class Document(models.Model):
-    folder = models.ForeignKey(FolderClient, on_delete=models.CASCADE)
-    name = models.CharField(blank=True, max_length=100)
-    created = models.DateTimeField(blank=True, default=datetime.now)
+    folder = models.ForeignKey(
+        FolderClient,
+        verbose_name='Folder del cliente',
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(
+        verbose_name='Nombre del documento',
+        blank=True,
+        max_length=150
+    )
+    created = models.DateTimeField(
+        verbose_name='Fecha de creacion',
+        blank=True,
+        auto_now_add=True
+    )
 
     def __str__(self):
         return "Documento: {} del folder {}".foormat(
@@ -62,3 +107,30 @@ class Document(models.Model):
     class Meta:
         verbose_name = 'Documento'
         verbose_name_plural = 'Documentos'
+
+
+class DocumentModification(models.Model):
+    document = models.ForeignKey(
+        Document,
+        verbose_name='Documento',
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    user = models.OneToOneField(
+        User,
+        verbose_name='Usuario que modifico',
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    updated = models.DateTimeField(
+        verbose_name='Fecha de modificacion',
+        blank=True,
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return "Documento modificado: {}".format(self.document.name)
+
+    class Meta:
+        verbose_name = 'Documento Modificado'
+        verbose_name_plural = 'Documentos modificados'

@@ -97,6 +97,12 @@ class Document(models.Model):
         blank=True,
         auto_now_add=True
     )
+    document = models.FileField(
+        verbose_name='Documento',
+        upload_to='documents/',
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return "Documento: {} del folder {}".foormat(

@@ -1,7 +1,13 @@
+import re
 import jwt
 import json
+
 from django.shortcuts import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework import serializers
+
+from users.models import User
 
 
 class RequestInfo(object):
@@ -47,3 +53,18 @@ class RequestInfo(object):
             content_type='application/json',
             status=data['status']
         )
+
+
+class ErrorMesages(object):
+    var_required = ''
+    var_invalid = ''
+
+    def validate_email(self, email):
+        try:
+            user = User.objects.get(email=email)
+            raise serializers.ValidationError('Email ya registrado')
+        except ObjectDoesNotExist:
+            return email
+        except Exception as e:
+            raise serializers.ValidationError(e)
+        return email

@@ -1,6 +1,7 @@
 import rest_auth.serializers
 from rest_framework import serializers
 from users.models import User
+from utils.helpers import ErrorMesages
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -10,15 +11,19 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_email(self, value):
+        ErrorMesages().validate_email(value)
+        return value
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'first_name', 'last_name', 'email', 'password',
+            'username', 'first_name', 'last_name', 'email', 'password',
         )
         extra_kwargs = {'password': {'write_only': True}}
 

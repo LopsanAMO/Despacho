@@ -8,7 +8,7 @@
 $ pip install virtualenv
 ````
 
-## Creacion y Activacion del entorno virtual con virtualenv
+## Creacion y Activacion del entorno virtual
 ```bash
 $ virtualenv -p python3 myvenv
 $ source myvenv/bin/activate

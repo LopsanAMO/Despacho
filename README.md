@@ -10,8 +10,8 @@ $ pip install virtualenv
 
 ## Creacion y Activacion del entorno virtual
 ```bash
-$ virtualenv -p python3 myvenv
-$ source myvenv/bin/activate
+$ virtualenv -p python3 venv
+$ source venv/bin/activate
 ````
 
 ## Clonar el proyecto

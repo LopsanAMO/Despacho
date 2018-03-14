@@ -12,7 +12,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(APIV1Urls)),
     path('api-token-auth/', views.obtain_auth_token),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path(
+        'api-auth/',
+        include(
+            'rest_framework.urls',
+            namespace='rest_framework')),
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
     path('refresh-token/', refresh_jwt_token),

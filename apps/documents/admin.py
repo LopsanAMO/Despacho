@@ -4,6 +4,7 @@ from .models import (
     DocumentModification
 )
 
+
 @admin.register(UserClient)
 class UserClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'created')

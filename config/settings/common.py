@@ -146,8 +146,7 @@ REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'rest_auth.serializers.UserDetailsSerializer',
     'PASSWORD_RESET_SERIALIZER': 'rest_auth.serializers.PasswordResetSerializer',
     'PASSWORD_RESET_CONFIRM_SERIALIZER': 'rest_auth.serializers.PasswordResetConfirmSerializer',
-    'PASSWORD_CHANGE_SERIALIZER': 'rest_auth.serializers.PasswordChangeSerializer'
-}
+    'PASSWORD_CHANGE_SERIALIZER': 'rest_auth.serializers.PasswordChangeSerializer'}
 
 JWT_AUTH = {
     'JWT_PAYLOAD_HANDLER': 'users.handlers.jwt_payload_handler',

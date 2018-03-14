@@ -42,7 +42,6 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         response = json.loads(self.client.get(self.url).content)
         self.assertEqual(user_data_response, response)
 
-
     def test_unique_email_validation(self):
         """
         Test to verify that a post call with already exists email

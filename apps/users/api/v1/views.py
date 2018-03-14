@@ -29,8 +29,8 @@ class UserAPIView(APIView):
         else:
             return request_info.status_401()
 
-
     permission_classes = (AllowAny, )
+
     def post(self, request):
         """Creates user accounts
         :param email: str

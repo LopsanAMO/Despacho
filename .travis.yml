@@ -8,7 +8,7 @@ services:
 
 env:
     global:
-        - export DJANGO_SETTINGS_MODULE="config.settings.local"
+        - export DJANGO_SETTINGS_MODULE="config.settings.develop"
         - export PYTHONPATH=$HOME/builds/LopsanAMO/Despacho
         - export PIP_USE_MIRRORS=true
 

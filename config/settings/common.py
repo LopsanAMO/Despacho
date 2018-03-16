@@ -132,9 +132,9 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer'
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
 }
@@ -193,8 +193,8 @@ SITE_ID = 2
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Tell nose to measure coverage on the 'foo' and 'bar' apps
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=users',
-]
+# # Tell nose to measure coverage on the 'foo' and 'bar' apps
+# NOSE_ARGS = [
+#     '--with-coverage',
+#     '--cover-package=users',
+# ]

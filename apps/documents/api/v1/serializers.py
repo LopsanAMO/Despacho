@@ -1,26 +1,38 @@
-from restframework import serializers
+from rest_framework import serializers
 from documents.models import UserClient, FolderClient, Document
 
+class DocumentSerializer(serializers.ModelSerializer):
+    document = serializers.CharField()
 
-class UserClientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserClient
-        fields = ('name', 'created')
-        extra_kwargs = {
-            'created': {
-                'read_only': True
-            }
-        }
+        model = Document
+        fields = ('name', 'created', 'document')
 
 
-class FolderClient(serializers.ModelSerializer):
-    user =
+class AllFolderClientSerializer(serializers.ModelSerializer):
+    document = serializers.SerializerMethodField()
 
     class Meta:
         model = FolderClient
-        fields = ('user', 'name', 'created')
+        fields = ('name', 'document')
+
+    def get_document(self, obj):
+        return DocumentSerializer(
+            Document.objects.filter(folder__id=obj.id), many=True).data
+
+
+class AllUserClientSerializer(serializers.ModelSerializer):
+    folder = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserClient
+        fields = ('name', 'created', 'folder')
         extra_kwargs = {
             'created': {
                 'read_only': True
             }
         }
+
+    def get_folder(self, obj):
+        return AllFolderClientSerializer(
+            FolderClient.objects.filter(user=obj), many=True).data

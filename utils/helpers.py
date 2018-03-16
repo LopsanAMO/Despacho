@@ -1,12 +1,11 @@
 import re
 import jwt
 import json
-
 from django.shortcuts import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework import serializers
-
+from rest_framework.pagination import PageNumberPagination
 from users.models import User
 
 
@@ -69,3 +68,9 @@ class ErrorMesages(object):
         except Exception as e:
             raise serializers.ValidationError(e)
         return email
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'limit'
+    max_page_size = 20

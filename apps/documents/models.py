@@ -105,7 +105,7 @@ class Document(models.Model):
     )
 
     def __str__(self):
-        return "Documento: {} del folder {}".foormat(
+        return "Documento: {} del folder {}".format(
             self.name,
             self.folder.folder_name
         )

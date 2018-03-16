@@ -1,13 +1,10 @@
 import jwt
 import json
-
 from django.contrib.auth.middleware import get_user
 from django.conf import settings
-
 from django.shortcuts import HttpResponse
 from rest_framework import serializers
 from rest_framework import status
-
 from users.models import User
 
 

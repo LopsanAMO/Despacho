@@ -5,13 +5,11 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-
+from .serializers import CreateUserSerializer, UserSerializer
 from users.models import User
 from users.handlers import generate_jwt
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
-
-from .serializers import CreateUserSerializer, UserSerializer
 from utils.helpers import RequestInfo
 
 

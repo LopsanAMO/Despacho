@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+import jwt
+import json
+from functools import wraps
 from django.conf import settings
 from django.shortcuts import HttpResponse
 from rest_framework import status
-from functools import wraps
-import jwt
-import json
 
 
 def get_jwt_token(request):

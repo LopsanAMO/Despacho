@@ -1,55 +1,34 @@
 # -*- coding: utf-8 -*-
 import json
-
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import HttpResponse
-
+from rest_framework import status, generics, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework import generics, serializers
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
-
-from documents.models import UserClient
-from .serializers import AllUserClientSerializer
+from utils.helpers import LargeResultsSetPagination
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from .serializers import AllUserClientSerializer, ClientSerializer
 from users.helpers import get_jwt_user
+from documents.models import UserClient
 from utils.helpers import RequestInfo
 
 
-class UserListAPIView(APIView):
-    @permission_classes((AllowAny, ))
-    def get(self, request):
-        req_inf = RequestInfo()
-        user = get_jwt_user(request)
-        limit = request.GET.get('limit', 20)
-        page = request.GET.get('page', 1)
-        order = request.GET.get('order', 'newer')
-        data = {}
-        if user is not None:
-            users = UserClient.objects.all()
-            if order == 'newer':
-                users.order_by('-created')
-            else:
-                users.order_by('createds')
-            paginator = Paginator(users, limit)
-            try:
-                client_page = paginator.page(page)
-            except PageNotAnInteger:
-                posts_page = paginator.page(1)
-            except EmptyPage:
-                client_page = paginator.page(paginator.num_pages)
-            data['num_pages'] = paginator.num_pages
-            data['clients'] = AllUserClientSerializer(
-                client_page.object_list,
-                many=True
-            ).data
-            return HttpResponse(
-                json.dumps(data),
-                content_type='application/json',
-                status=status.HTTP_200_OK
-            )
+class UserListAPIView(generics.ListAPIView):
+    authentication_class = (JSONWebTokenAuthentication,)
+    queryset = UserClient.objects.all()
+    serializer_class = AllUserClientSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        order = 'newer'
+        if self.request.query_params.get('order') is not None:
+            order = self.request.query_params.get('order')
+        if order == 'newer':
+            queryset = self.queryset.order_by('-created')
         else:
-            raise AuthenticationFailed()
+            queryset = self.queryset.order_by('created')
+        return queryset

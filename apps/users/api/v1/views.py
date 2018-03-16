@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import status
@@ -27,7 +28,7 @@ class UserAPIView(APIView):
             serializer = UserSerializer(user)
             return Response(serializer.data)
         else:
-            return request_info.status_401()
+            raise AuthenticationFailed()
 
     permission_classes = (AllowAny, )
 
@@ -86,4 +87,4 @@ class UserAPIView(APIView):
                 'detail': 'user updated'
             })
         else:
-            return request_info.status_400()
+            raise AuthenticationFailed()

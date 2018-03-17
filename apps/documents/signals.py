@@ -16,7 +16,7 @@ def user_create_or_modify_document(sender, instance, created, **kwargs):
             try:
                 user = entry[0].f_locals['request'].user
             except:
-                user = None
+                user = Nonedsad
             break
     if user:
         import pudb; pudb.set_trace()

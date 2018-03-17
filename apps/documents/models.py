@@ -1,4 +1,5 @@
 from django.db import models
+from django.template import defaultfilters
 from datetime import datetime
 from users.models import User
 
@@ -9,11 +10,24 @@ class UserClient(models.Model):
         blank=True,
         max_length=150
     )
+    slug = models.SlugField(
+        verbose_name='Slug',
+        max_length=50,
+        null=True,
+        blank=True,
+        unique=True
+    )
     created = models.DateTimeField(
         verbose_name='Fecha de creacion',
         blank=True,
         auto_now_add=True
     )
+
+    def save(self, *args, **kwargs):
+        empty_list = ['', ' ', None]
+        if self.slug in empty_list or self.slug != defaultfilters.slugify(self.name):  # noqa
+            self.slug = defaultfilters.slugify(self.name)
+        super(UserClient, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{}".format(self.name)

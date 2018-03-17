@@ -57,7 +57,6 @@ class ClientListAPIView(generics.ListAPIView):
 class ClientFolderListAPIView(generics.ListAPIView):
     authentication_class = (JSONWebTokenAuthentication,)
     serializer_class = ClientFolderSerializer
-    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
         queryset = UserClient.objects.all()
@@ -71,7 +70,6 @@ class ClientFolderListAPIView(generics.ListAPIView):
 class DocumentListAPIView(generics.ListAPIView):
     authentication_class = (JSONWebTokenAuthentication,)
     serializer_class = DocumentDetailSerializer
-    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
         queryset = Document.objects.all()

@@ -44,6 +44,13 @@ class FolderClient(models.Model):
         blank=True,
         on_delete=models.CASCADE
     )
+    slug = models.SlugField(
+        verbose_name='Slug',
+        max_length=50,
+        null=True,
+        blank=True,
+        unique=True
+    )
     name = models.CharField(
         verbose_name='Nombre de Folder',
         blank=True,
@@ -54,6 +61,12 @@ class FolderClient(models.Model):
         blank=True,
         auto_now_add=True
     )
+
+    def save(self, *args, **kwargs):
+        empty_list = ['', ' ', None]
+        if self.slug in empty_list or self.slug != defaultfilters.slugify(self.name):  # noqa
+            self.slug = defaultfilters.slugify(self.name)
+        super(FolderClient, self).save(*args, **kwargs)
 
     @property
     def folder_name(self):

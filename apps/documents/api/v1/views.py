@@ -12,10 +12,11 @@ from rest_framework.exceptions import AuthenticationFailed
 from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import (
-    AllUserClientSerializer, ClientSerializer, ClientFolderSerializer
+    AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
+    DocumentDetailSerializer
 )
 from users.helpers import get_jwt_user
-from documents.models import UserClient
+from documents.models import UserClient, Document, FolderClient
 from utils.helpers import RequestInfo
 
 
@@ -56,11 +57,30 @@ class ClientListAPIView(generics.ListAPIView):
 class ClientFolderListAPIView(generics.ListAPIView):
     authentication_class = (JSONWebTokenAuthentication,)
     serializer_class = ClientFolderSerializer
-    queryset = UserClient.objects.all()
+    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
+        queryset = UserClient.objects.all()
         if self.request.query_params.get('name') is not None:
-            queryset = self.queryset.filter(slug=self.request.query_params.get('name'))
+            queryset = queryset.filter(slug=self.request.query_params.get('name'))
         else:
-            queryset = {}
+            queryset = queryset
+        return queryset
+
+
+class DocumentListAPIView(generics.ListAPIView):
+    authentication_class = (JSONWebTokenAuthentication,)
+    serializer_class = DocumentDetailSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        queryset = Document.objects.all()
+        if self.request.query_params.get('folder') is not None:
+            queryset = queryset.filter(
+                folder=FolderClient.objects.get(
+                    slug=self.request.query_params.get('folder')
+                )
+            )
+        else:
+            queryset = queryset
         return queryset

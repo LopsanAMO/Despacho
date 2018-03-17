@@ -1,6 +1,16 @@
 from rest_framework import serializers
 from documents.models import UserClient, FolderClient, Document
 
+
+class DocumentDetailSerializer(serializers.ModelSerializer):
+    document = serializers.CharField()
+
+    class Meta:
+        model = Document
+        fields = ('name', 'created', 'document', 'folder')
+        depth = 1
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     document = serializers.CharField()
 
@@ -10,13 +20,13 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class AllFolderClientSerializer(serializers.ModelSerializer):
-    document = serializers.SerializerMethodField()
+    documents = serializers.SerializerMethodField()
 
     class Meta:
         model = FolderClient
-        fields = ('name', 'document')
+        fields = ('name', 'documents')
 
-    def get_document(self, obj):
+    def get_documents(self, obj):
         return DocumentSerializer(
             Document.objects.filter(folder__id=obj.id), many=True).data
 

@@ -81,7 +81,7 @@ class FolderClient(models.Model):
 
 
 class UserClientModification(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         verbose_name='Usuario',
         blank=True,
@@ -149,7 +149,7 @@ class DocumentModification(models.Model):
         blank=True,
         on_delete=models.CASCADE
     )
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         verbose_name='Usuario que modifico',
         blank=True,

@@ -11,7 +11,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
 from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import AllUserClientSerializer, ClientSerializer
+from .serializers import (
+    AllUserClientSerializer, ClientSerializer, ClientFolderSerializer
+)
 from users.helpers import get_jwt_user
 from documents.models import UserClient
 from utils.helpers import RequestInfo
@@ -48,4 +50,17 @@ class ClientListAPIView(generics.ListAPIView):
             queryset = self.queryset.order_by('-created')
         else:
             queryset = self.queryset.order_by('created')
+        return queryset
+
+
+class ClientFolderListAPIView(generics.ListAPIView):
+    authentication_class = (JSONWebTokenAuthentication,)
+    serializer_class = ClientFolderSerializer
+    queryset = UserClient.objects.all()
+
+    def get_queryset(self):
+        if self.request.query_params.get('name') is not None:
+            queryset = self.queryset.filter(slug=self.request.query_params.get('name'))
+        else:
+            queryset = {}
         return queryset

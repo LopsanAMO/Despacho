@@ -7,7 +7,7 @@ from .models import (
 
 @admin.register(UserClient)
 class UserClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created')
+    list_display = ('name', 'created', 'slug')
     list_filter = ('created',)
 
 

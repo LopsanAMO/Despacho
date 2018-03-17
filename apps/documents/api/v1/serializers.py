@@ -21,6 +21,12 @@ class AllFolderClientSerializer(serializers.ModelSerializer):
             Document.objects.filter(folder__id=obj.id), many=True).data
 
 
+class FolderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FolderClient
+        fields = ('name', 'created')
+
+
 class AllUserClientSerializer(serializers.ModelSerializer):
     folder = serializers.SerializerMethodField()
 
@@ -42,3 +48,15 @@ class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserClient
         fields = ('name', )
+
+
+class ClientFolderSerializer(serializers.ModelSerializer):
+    folders = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserClient
+        fields = ('name', 'folders')
+
+    def get_folders(self, obj):
+        return FolderSerializer(
+            FolderClient.objects.filter(user=obj), many=True).data

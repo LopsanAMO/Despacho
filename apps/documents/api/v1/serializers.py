@@ -36,3 +36,9 @@ class AllUserClientSerializer(serializers.ModelSerializer):
     def get_folder(self, obj):
         return AllFolderClientSerializer(
             FolderClient.objects.filter(user=obj), many=True).data
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserClient
+        fields = ('name', )

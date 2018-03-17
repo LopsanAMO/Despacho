@@ -32,3 +32,20 @@ class UserListAPIView(generics.ListAPIView):
         else:
             queryset = self.queryset.order_by('created')
         return queryset
+
+
+class ClientListAPIView(generics.ListAPIView):
+    authentication_class = (JSONWebTokenAuthentication,)
+    queryset = UserClient.objects.all().order_by('name')
+    serializer_class = ClientSerializer
+    pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        order = 'newer'
+        if self.request.query_params.get('order') is not None:
+            order = self.request.query_params.get('order')
+        if order == 'newer':
+            queryset = self.queryset.order_by('-created')
+        else:
+            queryset = self.queryset.order_by('created')
+        return queryset

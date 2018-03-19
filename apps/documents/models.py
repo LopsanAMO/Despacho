@@ -22,6 +22,10 @@ class UserClient(models.Model):
         blank=True,
         auto_now_add=True
     )
+    active = models.BooleanField(
+        verbose_name='Cliente activo',
+        default=True
+    )
 
     def save(self, *args, **kwargs):
         empty_list = ['', ' ', None]

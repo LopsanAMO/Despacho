@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from documents.models import UserClient, FolderClient, Document
 
-
+#este es el bueno
 class DocumentDetailSerializer(serializers.ModelSerializer):
     document = serializers.CharField()
 
@@ -9,6 +9,7 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         model = Document
         fields = ('name', 'created', 'document', 'folder')
         depth = 1
+        extra_kwargs = {'created': {'read_only': True}}
 
 
 class DocumentSerializer(serializers.ModelSerializer):

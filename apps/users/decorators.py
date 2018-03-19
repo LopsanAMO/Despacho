@@ -35,7 +35,7 @@ def validate_jwt(view_func):
             except Exception as e:
                 data = {
                     'status': status.HTTP_400_BAD_REQUEST,
-                    'detail': e.args[0]
+                    'detail': "{}".format(e.args[0])
                 }
             return HttpResponse(
                 json.dumps(data),

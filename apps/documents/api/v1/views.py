@@ -14,7 +14,7 @@ from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
-    DocumentDetailSerializer
+    DocumentDetailSerializer, FolderSerializer
 )
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
@@ -119,7 +119,6 @@ class UserClientDetailAPIView(APIView):
         except UserClient.DoesNotExist as e:
             return e.args[0]
 
-    @validate_jwt
     def put(self, request, pk):
         """UserClientDetailAPIView put
         Description:
@@ -153,3 +152,52 @@ class UserClientAPIView(APIView):
             return req_inf.status_200()
         else:
             return req_inf.status_400(serializer.errors)
+
+
+class FolderAPIView(APIView):
+    def post(self, request):
+        """FolderAPIView post
+        Description:
+            Create folders
+        Args:
+            :param name: (str) the name of the folder
+        """
+        req_inf = RequestInfo()
+        serializer = FolderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return req_inf.status_200()
+        else:
+            return req_inf.status_400(serializer.errors)
+
+
+
+class FolderClientAPIView(APIView):
+    def get_object(self, pk):
+        """get_object
+        Description:
+            Get FolderClient object or None
+        Args:
+            :param pk: (int) FolderClient's pk
+        """
+        req_inf = RequestInfo()
+        try:
+            return FolderClient.objects.get(pk=pk)
+        except FolderClient.DoesNotExist as e:
+            return e.args[0]
+
+    def put(self, request, pk=None):
+        """FolderClientAPIView put
+        Description:
+            update client information
+        """
+        req_inf = RequestInfo()
+        folder_client = self.get_object(pk)
+        if isinstance(folder_client, FolderClient):
+            serializer = FolderSerializer(folder_client, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return req_inf.status_200()
+            return req_inf.status_400(serializer.errors)
+        else:
+            return req_inf.status_404(folder_client)

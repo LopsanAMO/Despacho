@@ -245,7 +245,10 @@ class DocumentDetailAPIView(APIView):
         req_inf = RequestInfo()
         document_cls = self.get_object(pk)
         if isinstance(document_cls, Document):
-            serializer = DocumentInfoSerializer(document_cls, data=request.data)
+            serializer = DocumentInfoSerializer(
+                document_cls,
+                data=request.data
+            )
             if serializer.is_valid():
                 serializer.save()
                 return req_inf.status_200()

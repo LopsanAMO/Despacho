@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+import jwt
+import json
+from functools import wraps
 from django.conf import settings
 from django.shortcuts import HttpResponse
 from rest_framework import status
-from functools import wraps
-import jwt
-import json
 
 
 def get_jwt_token(request):
@@ -35,7 +35,7 @@ def validate_jwt(view_func):
             except Exception as e:
                 data = {
                     'status': status.HTTP_400_BAD_REQUEST,
-                    'detail': e.args[0]
+                    'detail': "{}".format(e.args[0])
                 }
             return HttpResponse(
                 json.dumps(data),

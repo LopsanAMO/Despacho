@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-
+from .serializers import CreateUserSerializer, UserSerializer
 from users.models import User
 from users.handlers import generate_jwt
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
-
-from .serializers import CreateUserSerializer, UserSerializer
 from utils.helpers import RequestInfo
 
 
@@ -27,7 +26,7 @@ class UserAPIView(APIView):
             serializer = UserSerializer(user)
             return Response(serializer.data)
         else:
-            return request_info.status_401()
+            raise AuthenticationFailed()
 
     permission_classes = (AllowAny, )
 
@@ -86,4 +85,4 @@ class UserAPIView(APIView):
                 'detail': 'user updated'
             })
         else:
-            return request_info.status_400()
+            raise AuthenticationFailed()

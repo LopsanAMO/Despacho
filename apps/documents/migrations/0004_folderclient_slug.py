@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='folderclient',
             name='slug',
-            field=models.SlugField(blank=True, null=True, unique=True, verbose_name='Slug'),
+            field=models.SlugField(
+                blank=True,
+                null=True,
+                unique=True,
+                verbose_name='Slug'),
         ),
     ]

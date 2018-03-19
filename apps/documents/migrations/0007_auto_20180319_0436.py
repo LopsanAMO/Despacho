@@ -14,6 +14,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='folderclient',
             name='user',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='documents.UserClient', verbose_name='Cliente'),
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='documents.UserClient',
+                verbose_name='Cliente'),
         ),
     ]

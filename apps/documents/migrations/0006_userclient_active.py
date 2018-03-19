@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userclient',
             name='active',
-            field=models.BooleanField(default=True, verbose_name='Cliente activo'),
+            field=models.BooleanField(
+                default=True,
+                verbose_name='Cliente activo'),
         ),
     ]

@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='document',
-            field=models.FileField(blank=True, null=True, upload_to='documents/', verbose_name='Documento'),
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to='documents/',
+                verbose_name='Documento'),
         ),
     ]

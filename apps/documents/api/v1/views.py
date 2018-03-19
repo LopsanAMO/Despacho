@@ -172,7 +172,6 @@ class FolderAPIView(APIView):
             return req_inf.status_400(serializer.errors)
 
 
-
 class FolderClientAPIView(APIView):
     def get_object(self, pk):
         """get_object

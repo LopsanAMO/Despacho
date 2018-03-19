@@ -14,7 +14,7 @@ from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
-    DocumentDetailSerializer, FolderSerializer
+    DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer
 )
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
@@ -161,6 +161,7 @@ class FolderAPIView(APIView):
             Create folders
         Args:
             :param name: (str) the name of the folder
+            :param user: (int) user id
         """
         req_inf = RequestInfo()
         serializer = FolderSerializer(data=request.data)
@@ -201,3 +202,53 @@ class FolderClientAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(folder_client)
+
+
+class DocumentAPIView(APIView):
+    def post(self, request):
+        """DocumentAPIView post
+        Description:
+            Create folders
+        Args:
+            :param name: (str) the name of the document
+            :param document: (file) document file
+            :param folder: (id) folder id
+        """
+        req_inf = RequestInfo()
+        serializer = DocumentInfoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return req_inf.status_200()
+        else:
+            return req_inf.status_400(serializer.errors)
+
+
+class DocumentDetailAPIView(APIView):
+    def get_object(self, pk):
+        """get_object
+        Description:
+            Get Document object or None
+        Args:
+            :param pk: (int) Document's pk
+        """
+        req_inf = RequestInfo()
+        try:
+            return Document.objects.get(pk=pk)
+        except Document.DoesNotExist as e:
+            return e.args[0]
+
+    def put(self, request, pk):
+        """DocumentDetailAPIView put
+        Description:
+            update document information
+        """
+        req_inf = RequestInfo()
+        document_cls = self.get_object(pk)
+        if isinstance(document_cls, Document):
+            serializer = DocumentInfoSerializer(document_cls, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return req_inf.status_200()
+            return req_inf.status_400(serializer.errors)
+        else:
+            return req_inf.status_404(document_cls)

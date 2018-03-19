@@ -1,7 +1,13 @@
 from rest_framework import serializers
 from documents.models import UserClient, FolderClient, Document
 
-#este es el bueno
+
+class DocumentInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ('name', 'document', 'folder')
+
+
 class DocumentDetailSerializer(serializers.ModelSerializer):
     document = serializers.CharField()
 

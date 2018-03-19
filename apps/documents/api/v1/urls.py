@@ -2,7 +2,7 @@ from django.urls import path, include
 from .views import (
     UserListAPIView, ClientListAPIView, ClientFolderListAPIView,
     DocumentListAPIView, UserClientAPIView, UserClientDetailAPIView,
-    FolderClientAPIView, FolderAPIView
+    FolderClientAPIView, FolderAPIView, DocumentAPIView, DocumentDetailAPIView
 )
 
 urlpatterns = [
@@ -21,5 +21,11 @@ urlpatterns = [
         name='folders_detail'
     ),
     path('folders/all', ClientFolderListAPIView.as_view(), name='folder_list'),
-    path('documents', DocumentListAPIView.as_view(), name='documents_list'),
+    path('documents/', DocumentAPIView.as_view(), name='documents'),
+    path(
+        'documents/<int:pk>',
+        DocumentDetailAPIView.as_view(),
+        name='documents_detail'
+    ),
+    path('documents/all', DocumentListAPIView.as_view(), name='documents_list'),
 ]

@@ -42,7 +42,7 @@ class UserClient(models.Model):
 
 
 class FolderClient(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         UserClient,
         verbose_name='Cliente',
         blank=True,

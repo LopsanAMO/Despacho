@@ -20,10 +20,9 @@ class UserAPIView(APIView):
         :param Authorization: token
         :return UserSerializer: json user data
         """
-        user = get_jwt_user(request)
         request_info = RequestInfo()
-        if user is not None:
-            serializer = UserSerializer(user)
+        if request.user is not None:
+            serializer = UserSerializer(request.user)
             return Response(serializer.data)
         else:
             raise AuthenticationFailed()
@@ -74,7 +73,7 @@ class UserAPIView(APIView):
         :param profile_photo: file
         :return token: jwt_token
         """
-        user = get_jwt_user(request)
+        user = request.user
         request_info = RequestInfo()
         serializer = UserSerializer(user, data=request.data)
         if user is not None and serializer.is_valid():

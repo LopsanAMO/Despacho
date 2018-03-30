@@ -63,9 +63,14 @@ class AllUserClientSerializer(serializers.ModelSerializer):
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model = UserClient
-        fields = ('name', )
+        fields = ('name', 'url')
+
+    def get_url(self, obj):
+        return '/api/v1/documents/folders/all?{}'.format(obj.slug)
 
 
 class ClientFolderSerializer(serializers.ModelSerializer):

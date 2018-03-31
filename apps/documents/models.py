@@ -39,6 +39,7 @@ class UserClient(models.Model):
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
+        unique_together = ('name',)
 
 
 class FolderClient(models.Model):
@@ -74,7 +75,7 @@ class FolderClient(models.Model):
 
     @property
     def folder_name(self):
-        return "Folder de {}".format(self.user.name)
+        return "Folder de {}: {}".format(self.user.name, self.name)
 
     def __str__(self):
         return "{}".format(self.folder_name)

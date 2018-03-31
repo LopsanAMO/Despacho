@@ -56,7 +56,7 @@ class ClientListAPIView(generics.ListAPIView):
     pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
-        order = 'newer'
+        order = None
         if self.request.query_params.get('order') is not None:
             order = self.request.query_params.get('order')
         if order == 'newer':

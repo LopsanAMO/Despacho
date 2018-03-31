@@ -137,7 +137,6 @@ class UserClientDetailAPIView(APIView):
 
 
 class UserClientAPIView(APIView):
-    @validate_jwt
     def post(self, request):
         """UserClientAPIView post
         Description:

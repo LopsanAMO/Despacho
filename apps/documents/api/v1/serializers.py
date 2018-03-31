@@ -41,7 +41,7 @@ class AllFolderClientSerializer(serializers.ModelSerializer):
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderClient
-        fields = ('name', 'created', 'user')
+        fields = ('name', 'created')
         extra_kwargs = {'created': {'read_only': True}}
 
 
@@ -70,8 +70,8 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ('name', 'url')
 
     def get_url(self, obj):
-        return '/api/v1/documents/folders/all?{}'.format(obj.slug)
-
+        return '{}'.format(obj.slug)
+    
 
 class ClientFolderSerializer(serializers.ModelSerializer):
     folders = serializers.SerializerMethodField()

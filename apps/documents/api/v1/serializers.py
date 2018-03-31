@@ -71,7 +71,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def get_url(self, obj):
         return '{}'.format(obj.slug)
-    
+
 
 class ClientFolderSerializer(serializers.ModelSerializer):
     folders = serializers.SerializerMethodField()

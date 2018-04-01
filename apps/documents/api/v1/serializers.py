@@ -73,6 +73,12 @@ class ClientSerializer(serializers.ModelSerializer):
         return '{}'.format(obj.slug)
 
 
+class ClientSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserClient
+        fields = ('name', 'id')
+
+
 class ClientFolderSerializer(serializers.ModelSerializer):
     folders = serializers.SerializerMethodField()
 

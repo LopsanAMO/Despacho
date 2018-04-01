@@ -14,7 +14,8 @@ from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
-    DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer
+    DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
+    ClientSimpleSerializer
 )
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
@@ -137,6 +138,16 @@ class UserClientDetailAPIView(APIView):
 
 
 class UserClientAPIView(APIView):
+    def get(self, request):
+        req_inf = RequestInfo()
+        name = request.GET.get('name', None)
+        try:
+            serializer = ClientSimpleSerializer(UserClient.objects.get(slug=name))
+            return Response(serializer.data)
+        except Exception as e:
+            return req_inf.status_400(e.args[0])
+            
+
     def post(self, request):
         """UserClientAPIView post
         Description:

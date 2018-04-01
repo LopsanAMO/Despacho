@@ -41,8 +41,8 @@ class AllFolderClientSerializer(serializers.ModelSerializer):
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderClient
-        fields = ('name', 'created', 'slug')
-        extra_kwargs = {'created': {'read_only': True}}
+        fields = ('name', 'created', 'slug', 'user')
+        extra_kwargs = {'created': {'read_only': True}, 'users': {'write_only': True}}
 
 
 class AllUserClientSerializer(serializers.ModelSerializer):

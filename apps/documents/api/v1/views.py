@@ -206,7 +206,7 @@ class DocumentAPIView(APIView):
     def post(self, request):
         """DocumentAPIView post
         Description:
-            Create folders
+            Create Documents
         Args:
             :param name: (str) the name of the document
             :param document: (file) document file

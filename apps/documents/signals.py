@@ -20,6 +20,4 @@ def user_create_or_modify_document(sender, instance, created, **kwargs):
                 user = Nonedsad
             break
     if user:
-        import pudb
-        pudb.set_trace()
         hola = 'hola'

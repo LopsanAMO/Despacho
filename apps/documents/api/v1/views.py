@@ -252,8 +252,6 @@ class DocumentAPIView(APIView):
             :param document: (file) document file
             :param folder: (id) folder id
         """
-        import pudb
-        pudb.set_trace()
         req_inf = RequestInfo()
         serializer = DocumentInfoSerializer(data=request.data)
         if serializer.is_valid():

@@ -13,7 +13,7 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ('name', 'created', 'document', 'folder')
+        fields = ('name', 'created', 'document', 'folder', 'slug')
         depth = 1
         extra_kwargs = {'created': {'read_only': True}}
 

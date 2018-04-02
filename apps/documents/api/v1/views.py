@@ -325,3 +325,23 @@ class DocumentDetailAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(document_cls)
+
+    def delete(self, request, pk=None):
+        """DocumentDetailAPIView delete
+        Description:
+            Delete Documents
+        Args:
+            :param name: (str) the name of the document
+        """
+        req_inf = RequestInfo()
+        name = request.query_params.get('name', None)
+        if name is not None:
+            try:
+                document = Document.objects.get(slug=name)
+                document.document.delete()
+                document.delete()
+                return req_inf.status_200()
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
+        else:
+            return req_inf.status_400('Nombre de documento requerido')

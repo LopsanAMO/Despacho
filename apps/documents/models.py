@@ -51,10 +51,9 @@ class FolderClient(models.Model):
     )
     slug = models.SlugField(
         verbose_name='Slug',
-        max_length=50,
+        max_length=100,
         null=True,
         blank=True,
-        unique=True
     )
     name = models.CharField(
         verbose_name='Nombre de Folder',
@@ -135,12 +134,25 @@ class Document(models.Model):
         null=True,
         blank=True
     )
+    slug = models.SlugField(
+        verbose_name='Slug',
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+    
 
     def __str__(self):
         return "Documento: {} del folder {}".format(
             self.name,
             self.folder.folder_name
         )
+
+    def save(self, *args, **kwargs):
+        empty_list = ['', ' ', None]
+        if self.slug in empty_list or self.slug != defaultfilters.slugify(self.name):  # noqa
+            self.slug = defaultfilters.slugify(self.name)
+        super(Document, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Documento'

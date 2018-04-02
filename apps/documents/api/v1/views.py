@@ -152,11 +152,11 @@ class UserClientAPIView(APIView):
         req_inf = RequestInfo()
         name = request.GET.get('name', None)
         try:
-            serializer = ClientSimpleSerializer(UserClient.objects.get(slug=name))
+            serializer = ClientSimpleSerializer(
+                UserClient.objects.get(slug=name))
             return Response(serializer.data)
         except Exception as e:
             return req_inf.status_400(e.args[0])
-            
 
     def post(self, request):
         """UserClientAPIView post
@@ -249,7 +249,7 @@ class FolderClientAPIView(APIView):
 
 
 class DocumentAPIView(APIView):
-    
+
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
@@ -261,7 +261,8 @@ class DocumentAPIView(APIView):
             :param document: (file) document file
             :param folder: (id) folder id
         """
-        import pudb; pudb.set_trace()
+        import pudb
+        pudb.set_trace()
         req_inf = RequestInfo()
         serializer = DocumentInfoSerializer(data=request.data)
         if serializer.is_valid():

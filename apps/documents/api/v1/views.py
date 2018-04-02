@@ -10,12 +10,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.parsers import MultiPartParser, FormParser
 from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
     DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
-    ClientSimpleSerializer
+    ClientSimpleSerializer, FolderSimpleSerializer
 )
 from users.helpers import get_jwt_user
 from users.decorators import validate_jwt
@@ -177,6 +178,25 @@ class UserClientAPIView(APIView):
 
 
 class FolderAPIView(APIView):
+    def get(self, request):
+        """FolderAPIView get
+        Description:
+            Get folder id
+        Args:
+            :param name: (str) folder slug name
+        """
+        req_inf = RequestInfo()
+        name = request.GET.get('name', None)
+        if name is not None:
+            try:
+                serializer = FolderSimpleSerializer(
+                    FolderClient.objects.get(slug=name))
+                return Response(serializer.data)
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
+        else:
+            return req_inf.status_400('nombre de folder requerido')
+
     def post(self, request):
         """FolderAPIView post
         Description:
@@ -229,6 +249,9 @@ class FolderClientAPIView(APIView):
 
 
 class DocumentAPIView(APIView):
+    
+    parser_classes = (MultiPartParser, FormParser)
+
     def post(self, request):
         """DocumentAPIView post
         Description:
@@ -238,6 +261,7 @@ class DocumentAPIView(APIView):
             :param document: (file) document file
             :param folder: (id) folder id
         """
+        import pudb; pudb.set_trace()
         req_inf = RequestInfo()
         serializer = DocumentInfoSerializer(data=request.data)
         if serializer.is_valid():

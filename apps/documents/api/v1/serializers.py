@@ -38,6 +38,12 @@ class AllFolderClientSerializer(serializers.ModelSerializer):
             Document.objects.filter(folder__id=obj.id), many=True).data
 
 
+class FolderSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FolderClient
+        fields = ('name', 'id')
+
+
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderClient

@@ -142,6 +142,12 @@ class UserClientDetailAPIView(APIView):
 
 class UserClientAPIView(APIView):
     def get(self, request):
+        """UserClientAPIView get
+        Description:
+            Get client id
+        Args:
+            :param name: (str) client slug name
+        """
         req_inf = RequestInfo()
         name = request.GET.get('name', None)
         try:

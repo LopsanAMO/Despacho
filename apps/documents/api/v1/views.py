@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
-from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import HttpResponse
-from django.db.models import Q
-from rest_framework import status, generics, serializers
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.parsers import MultiPartParser, FormParser
 from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -18,8 +11,6 @@ from .serializers import (
     DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
     ClientSimpleSerializer, FolderSimpleSerializer
 )
-from users.helpers import get_jwt_user
-from users.decorators import validate_jwt
 from documents.models import UserClient, Document, FolderClient
 from utils.helpers import RequestInfo
 
@@ -249,7 +240,7 @@ class FolderClientAPIView(APIView):
 
 
 class DocumentAPIView(APIView):
-    
+
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):

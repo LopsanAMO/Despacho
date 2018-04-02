@@ -8,8 +8,6 @@ from rest_framework import status
 from .serializers import CreateUserSerializer, UserSerializer
 from users.models import User
 from users.handlers import generate_jwt
-from users.helpers import get_jwt_user
-from users.decorators import validate_jwt
 from utils.helpers import RequestInfo
 
 
@@ -59,7 +57,6 @@ class UserAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    @validate_jwt
     def put(self, request):
         """Update user account data
         :param email: str

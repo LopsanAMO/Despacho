@@ -2,11 +2,13 @@ from django.urls import path, include
 from .views import (
     UserListAPIView, ClientListAPIView, ClientFolderListAPIView,
     DocumentListAPIView, UserClientAPIView, UserClientDetailAPIView,
-    FolderClientAPIView, FolderAPIView, DocumentAPIView, DocumentDetailAPIView
+    FolderClientAPIView, FolderAPIView, DocumentAPIView, DocumentDetailAPIView,
+    user_by_name
 )
 
 urlpatterns = [
     path('all', UserListAPIView.as_view(), name='all_clients'),
+    path('clients/', user_by_name, name='clients_by_name'),
     path('clients', UserClientAPIView.as_view(), name='clients'),
     path(
         'clients/<int:pk>/',

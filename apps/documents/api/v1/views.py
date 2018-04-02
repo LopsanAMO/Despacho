@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.decorators import api_view
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
     DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
@@ -13,6 +14,28 @@ from .serializers import (
 )
 from documents.models import UserClient, Document, FolderClient
 from utils.helpers import RequestInfo
+
+
+@api_view(['GET'])
+def user_by_name(request):
+    from django.shortcuts import HttpResponse
+    from django.template import defaultfilters
+    name = defaultfilters.slugify(request.GET.get('name'))
+    try:
+        serializer = ClientSerializer(
+            UserClient.objects.filter(slug__icontains=name).order_by('name'),
+            many=True)
+        return HttpResponse(
+            json.dumps({"results": serializer.data, "count": 1}),
+            content_type='application/json',
+            status=200
+        )
+    except Exception:
+        return HttpResponse(
+            json.dumps({"results": [], "count": 0}),
+            content_type='application/json',
+            status=200
+        )
 
 
 class UserListAPIView(generics.ListAPIView):
@@ -50,12 +73,13 @@ class ClientListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         order = None
+        queryset = self.queryset
         if self.request.query_params.get('order') is not None:
             order = self.request.query_params.get('order')
-        if order == 'newer':
-            queryset = self.queryset.order_by('-created')
-        else:
-            queryset = self.queryset.order_by('created')
+            if order == 'newer':
+                queryset = self.queryset.order_by('-created')
+            else:
+                queryset = self.queryset.order_by('created')
         return queryset
 
 

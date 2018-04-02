@@ -130,8 +130,11 @@ class UserClientDetailAPIView(APIView):
         if isinstance(user_client, UserClient):
             serializer = ClientSerializer(user_client, data=request.data)
             if serializer.is_valid():
-                serializer.save()
-                return req_inf.status_200()
+                try:
+                    serializer.save()
+                    return req_inf.status_200()
+                except Exception as e:
+                    return req_inf.status_400(e.args[0])
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(user_client)
@@ -158,8 +161,11 @@ class UserClientAPIView(APIView):
         req_inf = RequestInfo()
         serializer = ClientSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return req_inf.status_200()
+            try:
+                serializer.save()
+                return req_inf.status_200()
+            except Exception as e:
+                return req_inf.status(e.args[0])
         else:
             return req_inf.status_400(serializer.errors)
 
@@ -176,8 +182,11 @@ class FolderAPIView(APIView):
         req_inf = RequestInfo()
         serializer = FolderSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return req_inf.status_200()
+            try:
+                serializer.save()
+                return req_inf.status_200()
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
         else:
             return req_inf.status_400(serializer.errors)
 
@@ -226,8 +235,11 @@ class DocumentAPIView(APIView):
         req_inf = RequestInfo()
         serializer = DocumentInfoSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return req_inf.status_200()
+            try:
+                serializer.save()
+                return req_inf.status_200()
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
         else:
             return req_inf.status_400(serializer.errors)
 
@@ -259,8 +271,11 @@ class DocumentDetailAPIView(APIView):
                 data=request.data
             )
             if serializer.is_valid():
-                serializer.save()
-                return req_inf.status_200()
+                try:
+                    serializer.save()
+                    return req_inf.status_200()
+                except Exception as e:
+                    return req_inf.status_400(e.args[0])
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(document_cls)

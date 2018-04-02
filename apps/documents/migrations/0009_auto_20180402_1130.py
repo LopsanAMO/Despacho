@@ -13,11 +13,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, verbose_name='Slug'),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='Slug'),
         ),
         migrations.AlterField(
             model_name='folderclient',
             name='slug',
-            field=models.SlugField(blank=True, max_length=100, null=True, verbose_name='Slug'),
+            field=models.SlugField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='Slug'),
         ),
     ]

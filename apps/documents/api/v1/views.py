@@ -26,7 +26,9 @@ def user_by_name(request):
             UserClient.objects.filter(slug__icontains=name).order_by('name'),
             many=True)
         return HttpResponse(
-            json.dumps({"results": serializer.data, "count": 1}),
+            json.dumps({
+                "results": serializer.data,
+                "count": len(serializer.data)}),
             content_type='application/json',
             status=200
         )

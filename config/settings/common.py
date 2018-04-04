@@ -175,20 +175,6 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': None,
 }
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-if DEBUG is True:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\', '/')
-    STATIC_URL = '/static/'
-else:
-    STATIC_URL = 'https://despacho-cloud.s3-website-us-west-1.amazonaws.com/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    AWS_STORAGE_BUCKET_NAME = '<bucket>'
-    AWS_ACCESS_KEY_ID = '<key_id>'
-    AWS_SECRET_ACCESS_KEY = '<acces_key>'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 

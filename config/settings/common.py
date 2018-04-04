@@ -16,7 +16,7 @@ sys.path.append(BASE_DIR.child('apps'))
 SECRET_KEY = '48#7h!6*c7phwli$1u_3ki%a%tp@0-hcp#3k=sc)+$#9dq!%+s'
 
 
-ALLOWED_HOSTS = ["localhost", "34.218.115.218"]
+ALLOWED_HOSTS = ["localhost", "34.218.115.218", "despacho-back.herokuapp.com/"]
 
 # Application definition
 

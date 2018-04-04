@@ -175,9 +175,6 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE': None,
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
-
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 REST_USE_JWT = True

@@ -40,6 +40,27 @@ def user_by_name(request):
         )
 
 
+@api_view(['GET'])
+def document_by_name(request):
+    from django.shortcuts import HttpResponse
+    from django.template import defaultfilters
+    name = defaultfilters.slugify(request.GET.get('name'))
+    try:
+        serializer = DocumentDetailSerializer(
+            Document.objects.filter(slug__icontains=name).order_by('name'),
+            many=True
+        )
+        return HttpResponse(
+            json.dumps({
+                "results": serializer.data,
+                "count": len(serializer.data)
+            }),
+            content_type='application/json',
+            status=200
+        )
+    
+
+
 class UserListAPIView(generics.ListAPIView):
     """UserListAPIView
     Args:

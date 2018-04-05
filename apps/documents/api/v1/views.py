@@ -58,7 +58,6 @@ def document_by_name(request):
             content_type='application/json',
             status=200
         )
-    
 
 
 class UserListAPIView(generics.ListAPIView):

@@ -156,6 +156,30 @@ class UserClientDetailAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(user_client)
+    
+    def delete(self, request, pk=None):
+        """UserClientDetailAPIView delete
+        Description:
+            delete clients
+        Args:
+            :param name: (str) client name
+        """
+        req_inf = RequestInfo()
+        name = request.query_params.get('name', None)
+        if name is not None:
+            try:
+                client = UserClient.objects.get(slug=name)
+                folders = Folder.objects.filter(user=client)
+                for folder in folders:
+                    documents = Document.objects.filter(folder=folder)
+                    for doc in documents:
+                        doc.document.delete()
+                        doc.delete()
+                client.delete()
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
+        else:
+            return req_inf.status_400('Nombre de cliente requerido')
 
 
 class UserClientAPIView(APIView):
@@ -263,6 +287,29 @@ class FolderClientAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(folder_client)
+
+    def delete(self, request, pk=None):
+        """FolderClientAPIView delete
+        Description:
+            delete folder
+        Args:
+            :param name: (str) folder name
+        """
+        req_inf = RequestInfo()
+        name = request.query_params.get('name', None)
+        if name is not None:
+            try:
+                folder = FolderClient.objects.get(slug=name)
+                documents = Document.objects.filter(folder=folder)
+                for doc in documents:
+                    doc.document.delete()
+                    doc.delete()
+                folder.delete()
+                return req_inf.status_200()
+            except Exception as e:
+                return req_inf.status_400(e.args[0])
+        else:
+            return req_inf.status_400('Nombre de folder requerido')
 
 
 class DocumentAPIView(APIView):

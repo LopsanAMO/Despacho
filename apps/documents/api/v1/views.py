@@ -176,7 +176,7 @@ class UserClientDetailAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(user_client)
-    
+
     def delete(self, request, pk=None):
         """UserClientDetailAPIView delete
         Description:

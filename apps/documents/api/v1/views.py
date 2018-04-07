@@ -202,6 +202,7 @@ class UserClientDetailAPIView(APIView):
                         doc.document.delete()
                         doc.delete()
                 client.delete()
+                return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])
         else:

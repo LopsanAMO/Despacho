@@ -63,7 +63,7 @@ def document_by_name(request):
             json.dumps({"results": [], "count": 0}),
             content_type='application/json',
             status=200
-        )
+        )g
 
 
 class UserListAPIView(generics.ListAPIView):
@@ -195,7 +195,7 @@ class UserClientDetailAPIView(APIView):
         if name is not None:
             try:
                 client = UserClient.objects.get(slug=name)
-                folders = Folder.objects.filter(user=client)
+                folders = FolderClient.objects.filter(user=client)
                 for folder in folders:
                     documents = Document.objects.filter(folder=folder)
                     for doc in documents:

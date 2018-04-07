@@ -18,7 +18,7 @@ urlpatterns = [
     path('clients/all', ClientListAPIView.as_view(), name='client_list'),
     path('folders/', FolderAPIView.as_view(), name='folders'),
     path(
-        'folders/<int:pk>',
+        'folders/<int:pk>/',
         FolderClientAPIView.as_view(),
         name='folders_detail'
     ),

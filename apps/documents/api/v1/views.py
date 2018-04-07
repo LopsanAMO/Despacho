@@ -58,6 +58,12 @@ def document_by_name(request):
             content_type='application/json',
             status=200
         )
+    except Exception:
+        return HttpResponse(
+            json.dumps({"results": [], "count": 0}),
+            content_type='application/json',
+            status=200
+        )
 
 
 class UserListAPIView(generics.ListAPIView):
@@ -65,7 +71,7 @@ class UserListAPIView(generics.ListAPIView):
     Args:
         :param order: (str) newer or older
         :param limit: (int) limit pagination per page, default 10
-     """
+    """
     authentication_class = (JSONWebTokenAuthentication,)
     queryset = UserClient.objects.all()
     serializer_class = AllUserClientSerializer

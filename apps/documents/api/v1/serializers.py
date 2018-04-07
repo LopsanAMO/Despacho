@@ -76,7 +76,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserClient
-        fields = ('name', 'url')
+        fields = ('name', 'url', 'slug')
 
     def get_url(self, obj):
         return '{}'.format(obj.slug)

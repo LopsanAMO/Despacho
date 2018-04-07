@@ -63,7 +63,7 @@ def document_by_name(request):
             json.dumps({"results": [], "count": 0}),
             content_type='application/json',
             status=200
-        )g
+        )
 
 
 class UserListAPIView(generics.ListAPIView):

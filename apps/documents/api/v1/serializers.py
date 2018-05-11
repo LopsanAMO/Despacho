@@ -13,7 +13,7 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ('name', 'created', 'document', 'folder', 'slug')
+        fields = ('name', 'created', 'document', 'folder', 'slug'. 'id')
         depth = 1
         extra_kwargs = {'created': {'read_only': True}}
 
@@ -47,7 +47,7 @@ class FolderSimpleSerializer(serializers.ModelSerializer):
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = FolderClient
-        fields = ('name', 'created', 'slug', 'user')
+        fields = ('name', 'created', 'slug', 'user', 'id')
         extra_kwargs = {
             'created': {
                 'read_only': True}, 'users': {
@@ -76,7 +76,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserClient
-        fields = ('name', 'url', 'slug')
+        fields = ('name', 'url', 'slug', 'id')
 
     def get_url(self, obj):
         return '{}'.format(obj.slug)

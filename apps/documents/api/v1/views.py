@@ -4,16 +4,16 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from utils.helpers import LargeResultsSetPagination
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
     DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
     ClientSimpleSerializer, FolderSimpleSerializer
 )
 from documents.models import UserClient, Document, FolderClient
-from utils.helpers import RequestInfo
+from utils.helpers import RequestInfo, LargeResultsSetPagination
 
 
 @api_view(['GET'])
@@ -183,6 +183,8 @@ class UserClientDetailAPIView(APIView):
         else:
             return req_inf.status_404(user_client)
 
+    permission_classes = (IsAdminUser, )
+
     def delete(self, request, pk=None):
         """UserClientDetailAPIView delete
         Description:
@@ -315,6 +317,8 @@ class FolderClientAPIView(APIView):
         else:
             return req_inf.status_404(folder_client)
 
+    permission_classes = (IsAdminUser, )
+
     def delete(self, request, pk=None):
         """FolderClientAPIView delete
         Description:
@@ -399,6 +403,8 @@ class DocumentDetailAPIView(APIView):
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(document_cls)
+
+    permission_classes = (IsAdminUser, )
 
     def delete(self, request, pk=None):
         """DocumentDetailAPIView delete

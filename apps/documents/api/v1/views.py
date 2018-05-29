@@ -6,13 +6,13 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
 from .serializers import (
     AllUserClientSerializer, ClientSerializer, ClientFolderSerializer,
     DocumentDetailSerializer, FolderSerializer, DocumentInfoSerializer,
     ClientSimpleSerializer, FolderSimpleSerializer
 )
-from documents.models import UserClient, Document, FolderClient
+from documents.models import UserClient, Document, FolderClient, Log
+from users.permissions import IsAdminDelete
 from utils.helpers import RequestInfo, LargeResultsSetPagination
 
 
@@ -151,6 +151,8 @@ class DocumentListAPIView(generics.ListAPIView):
 
 
 class UserClientDetailAPIView(APIView):
+    permission_classes = (IsAdminDelete, )
+        
     def get_object(self, pk):
         """get_object
         Description:
@@ -169,6 +171,7 @@ class UserClientDetailAPIView(APIView):
         Description:
             update client information
         """
+        import pudb; pudb.set_trace()
         req_inf = RequestInfo()
         user_client = self.get_object(pk)
         if isinstance(user_client, UserClient):
@@ -176,14 +179,21 @@ class UserClientDetailAPIView(APIView):
             if serializer.is_valid():
                 try:
                     serializer.save()
+                    log = Log.objects.create(
+                        action=Log.NOTIFICATION_TYPE.get_value(
+                            'update_client'),
+                        user=request.user,
+                        description='Modificacion de cliente {} - {}'.format(
+                            serializer.instance.id, serializer.instance.name
+                        )
+                    )
+                    log.save()
                     return req_inf.status_200()
                 except Exception as e:
                     return req_inf.status_400(e.args[0])
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(user_client)
-
-    permission_classes = (IsAdminUser, )
 
     def delete(self, request, pk=None):
         """UserClientDetailAPIView delete
@@ -198,12 +208,22 @@ class UserClientDetailAPIView(APIView):
             try:
                 client = UserClient.objects.get(slug=name)
                 folders = FolderClient.objects.filter(user=client)
+                last_id = client.id
+                last_name = client.name
                 for folder in folders:
                     documents = Document.objects.filter(folder=folder)
                     for doc in documents:
                         doc.document.delete()
                         doc.delete()
                 client.delete()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'delete_client'),
+                    user=request.user,
+                    description='Eliminacion de cliente {} - {}'.format(
+                        last_id, last_name)
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])
@@ -240,6 +260,15 @@ class UserClientAPIView(APIView):
         if serializer.is_valid():
             try:
                 serializer.save()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'create_client'),
+                    user=request.user,
+                    description='Creacion de cliente {} - {}'.format(
+                        serializer.instance.id, serializer.instance.name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status(e.args[0])
@@ -280,6 +309,15 @@ class FolderAPIView(APIView):
         if serializer.is_valid():
             try:
                 serializer.save()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'create_folder'),
+                    user=request.user,
+                    description='Creacion de folder {} - {}'.format(
+                        serializer.instance.id, serializer.instance.name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])
@@ -288,6 +326,8 @@ class FolderAPIView(APIView):
 
 
 class FolderClientAPIView(APIView):
+    permission_classes = (IsAdminDelete, )
+
     def get_object(self, pk):
         """get_object
         Description:
@@ -312,12 +352,19 @@ class FolderClientAPIView(APIView):
             serializer = FolderSerializer(folder_client, data=request.data)
             if serializer.is_valid():
                 serializer.save()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'update_folder'),
+                    user=request.user,
+                    description='Modificacion de folder {} - {}'.format(
+                        serializer.instance.id, serializer.instance.name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(folder_client)
-
-    permission_classes = (IsAdminUser, )
 
     def delete(self, request, pk=None):
         """FolderClientAPIView delete
@@ -332,10 +379,21 @@ class FolderClientAPIView(APIView):
             try:
                 folder = FolderClient.objects.get(slug=name)
                 documents = Document.objects.filter(folder=folder)
+                last_id = folder.id
+                last_name = folder.name
                 for doc in documents:
                     doc.document.delete()
                     doc.delete()
                 folder.delete()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'update_client'),
+                    user=request.user,
+                    description='Modificacion de cliente {} - {}'.format(
+                        last_id, last_name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])
@@ -361,6 +419,15 @@ class DocumentAPIView(APIView):
         if serializer.is_valid():
             try:
                 serializer.save()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'create_document'),
+                    user=request.user,
+                    description='Creacion de Documento {} - {}'.format(
+                        serializer.instance.id, serializer.instance.name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])
@@ -369,6 +436,8 @@ class DocumentAPIView(APIView):
 
 
 class DocumentDetailAPIView(APIView):
+    permission_classes = (IsAdminDelete, )
+
     def get_object(self, pk):
         """get_object
         Description:
@@ -397,14 +466,21 @@ class DocumentDetailAPIView(APIView):
             if serializer.is_valid():
                 try:
                     serializer.save()
+                    log = Log.objects.create(
+                        action=Log.NOTIFICATION_TYPE.get_value(
+                            'update_document'),
+                        user=request.user,
+                        description='Modificacion de documento {} - {}'.format(
+                            serializer.instance.id, serializer.instance.name
+                        )
+                    )
+                    log.save()
                     return req_inf.status_200()
                 except Exception as e:
                     return req_inf.status_400(e.args[0])
             return req_inf.status_400(serializer.errors)
         else:
             return req_inf.status_404(document_cls)
-
-    permission_classes = (IsAdminUser, )
 
     def delete(self, request, pk=None):
         """DocumentDetailAPIView delete
@@ -419,7 +495,18 @@ class DocumentDetailAPIView(APIView):
             try:
                 document = Document.objects.get(slug=name)
                 document.document.delete()
+                last_id = document.id
+                last_name = document.name
                 document.delete()
+                log = Log.objects.create(
+                    action=Log.NOTIFICATION_TYPE.get_value(
+                        'delete_document'),
+                    user=request.user,
+                    description='Eliminacion de documento {}- {}'.format(
+                        las_id, last_name
+                    )
+                )
+                log.save()
                 return req_inf.status_200()
             except Exception as e:
                 return req_inf.status_400(e.args[0])

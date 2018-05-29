@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 
-SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'PUT', 'PATCH']
+SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS', 'PUT', 'PATCH', 'POST']
 
 class IsAdminDelete(BasePermission):
     def has_permission(self, request, view):

@@ -152,7 +152,7 @@ class DocumentListAPIView(generics.ListAPIView):
 
 class UserClientDetailAPIView(APIView):
     permission_classes = (IsAdminDelete, )
-        
+
     def get_object(self, pk):
         """get_object
         Description:
@@ -171,7 +171,8 @@ class UserClientDetailAPIView(APIView):
         Description:
             update client information
         """
-        import pudb; pudb.set_trace()
+        import pudb
+        pudb.set_trace()
         req_inf = RequestInfo()
         user_client = self.get_object(pk)
         if isinstance(user_client, UserClient):

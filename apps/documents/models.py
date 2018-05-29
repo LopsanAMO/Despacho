@@ -170,7 +170,7 @@ class Log(models.Model):
         create_document = ('create_document', 'Documento, Creado')
         update_document = ('update_document', 'Documento Actializado')
         delete_document = ('delete_Document', 'Documento Eliminado')
-    
+
         @classmethod
         def get_value(cls, _type):
             try:

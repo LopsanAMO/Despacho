@@ -1,0 +1,2365 @@
+openapi: 3.0.1
+info:
+  title: RedComer API
+  description: API de servicios de RedComer
+  contact:
+    email: lopsan.molina@gmail.com
+  license:
+    name: GNU GPL
+    url: 'http://www.gnu.org/licenses/gpl-3.0.html'
+  version: 1.0.0
+servers:
+  - url: 'https://reforma.herokuapp.com'
+    description: Producción
+  - url: 'https://0.0.0.0:8000'
+    description: Local
+tags:
+  - name: Auth
+    description: Servicios para autenticacion
+  - name: Usuarios
+    description: Servicios generales para usuarios
+  - name: Administrador
+    description: Servicios generales para Administradores
+  - name: Staff
+    description: Servicios generales para Staff
+  - name: Cocina
+    description: Servicios generales para Cocinas
+  - name: Menu
+    description: Servicios generales para Menus
+  - name: Platillos
+    description: Servicios generales para los Platillos
+  - name: Complementos
+    description: Servicios generales para los Complementos
+  - name: Ordenes
+    description:  Servicios generales para los Ordenes
+  - name: Pagos
+    description: Servicios generales para pagos
+  - name: Category
+    description: Servicios generales para categorias
+paths:
+  /api/v1/users/login/:
+    post:
+      tags:
+        - Auth
+        - Usuarios
+      summary: Login de usuarios normales
+      operationId: Auth.user_login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  default: correo@gmail.com
+                  description: Correo del usuario
+                password:
+                  type: string
+                  default: password
+                  description: Contraseña del usuario
+              required:
+                - email
+                - password
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/admins/login/:
+    post:
+      tags:
+        - Auth
+        - Administrador
+        - Staff
+      summary: Login para Administradores o Staff
+      operationId: Auth.admin_login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  default: correo@gmail.com
+                  description: Correo del admin/staff
+                password:
+                  type: string
+                  default: password
+                  description: Contraseña del admin/staff
+              required:
+                - username
+                - password
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/users/:
+    post:
+      tags:
+        - Usuarios
+      summary: Crear un nuevo usuario
+      operationId: Usuarios.signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  default: username
+                  description: Nombre de usuario
+                password:
+                  type: string
+                  default: password
+                  description: Contraseña del usuario
+                first_name:
+                  type: string
+                  default: nombre
+                  description: Nombre(s) del usuario
+                email:
+                  type: string
+                  default: correo@gmail.com
+                  description: Correo del usuario
+                phone:
+                  type: number
+                  default: 5555555555
+                  description: Numero de telefono
+              required:
+                - email
+                - first_name
+                - last_name
+                - phone
+                - password
+      responses:
+        '201':
+          description: Token access JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/users/user:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Usuarios
+      summary: Obtener la informacion del usuario
+      operationId: Usuario.info
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      security:
+        - Api-Token: []
+      tags:
+        - Usuarios
+      summary: Actualizar informacion del usuario
+      operationId: Usuarios.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserData'
+      responses:
+        '200':
+          description: Updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/users/recover-password:
+    post:
+      tags:
+        - Usuarios
+      summary: Recuperar Contraseña
+      operationId: Usuarios.recover_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  default: correo@gmail.com
+                  description: Correo del usuario
+              required:
+                - email
+      responses:
+        '200':
+          description: Ok
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/users/reset-password/:
+    post:
+      tags:
+        - Usuarios
+      summary: Cambiar contraseña
+      operationId: Usuarios.reset_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                token:
+                  type: string
+                  default: dsadsadsadadsa
+                  description: token enviado por correo para actualizar la contraseña
+                password:
+                  type: string
+                  default: password
+                  description: nueva contraseña a cambiar
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '494':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'
+  /api/v1/staff/users/:
+    post:
+      security:
+        - Api-Token: []
+      tags:
+        - Staff
+        - Administrador
+      summary: Crear nuevo usuario staff
+      operationId: Staff.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserData'
+      responses:
+        '200':
+          description: Created
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/staff/user/{userId}/:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Administrador
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "id del usuario"
+          required: true
+          schema:
+            type: string
+          style: simple
+      summary: obtener informacion sobre el usuario staff
+      operationId: Staff.info
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUserData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    put:
+      security:
+        - Api-Token: []
+      tags:
+        - Administrador
+        - Staff
+      parameters:
+          - name: "userId"
+            in: "path"
+            description: "id del usuario"
+            required: true
+            schema:
+              type: string
+            style: simple
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffUserData'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffUserData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v1/staff/user/:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Staff
+        - Administrador
+      summary: Obtener toda la lista de los usuarios staff
+      operationId: Staff.list
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  count:
+                    type: number
+                    default: 1
+                    description: el numero de paginas de la respuesta
+                  next:
+                    type: string
+                    default: null
+                    description: la url de la siguiente pagina de la respuesta
+                  previous:
+                    type: string
+                    default: null
+                    description: la url previa de la pagina de la respuesta
+                  results:
+                    type: array
+                    description: lista de los resultados de la respuesta
+                    items:
+                      type: object
+                      properties:
+                        first_name:
+                          type: string
+                          default: samuel
+                          description: el nombre del usuario staff
+                        last_name:
+                          type: string
+                          default: garcia
+                          description: el apellido del usuario staff
+                        email:
+                          type: string
+                          default: correo@gmail.com
+                          description: el correo electronico del usuario staff
+                        phone:
+                          type: string
+                          default: 5555555555
+                          description: el numero de telefono del usuario staff
+                        id:
+                          type: string
+                          default: fdsajopfsjaop32423
+                          description: el id del usuario staff
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/staff/change-password/:
+    post:
+      tags:
+        - Staff
+        - Administrador
+      summary: Cambiar la contraseña
+      operationId: Staff.change_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                token:
+                  type: string
+                  default: dsadsadsadadsa
+                  description: token enviado por correo para actualizar la contraseña
+                password:
+                  type: string
+                  default: password
+                  description: nueva contraseña a cambiar
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '494':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'
+  /api/v1/staff/recover-password:
+    post:
+      tags:
+        - Staff
+      summary: Cambiar contrase;a staff
+      operationId: Staff.recover_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  default: correo@gmail.com
+                  description: Correo del usuario
+              required:
+                - email
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/kitchens/:
+    post:
+      security:
+        - Api-Token: []
+      tags:
+        - Cocina
+      summary: Crear nueva Cocina
+      operationId: Cocina.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KitchenData'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/kitchens/kitchen/{kitchenId}/:
+    put:
+      security:
+        - Api-Token: []
+      tags:
+        - Cocina
+      parameters:
+        - name: "kitchenId"
+          in: "path"
+          description: "id de la cocina"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Actualizar cocina
+      operationId: Cocina.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KitchenData'
+      responses:
+        '200':
+          description: Updated
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+    delete:
+      security:
+        - Api-Token: []
+      tags:
+        - Cocina
+      parameters:
+        - name: "kitchenId"
+          in: "path"
+          description: "id de la cocina"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Eliminar cocina
+      operationId: Cocina.delete
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Cocina
+      parameters:
+        - name: "kitchenId"
+          in: "path"
+          description: "id de la cocina"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Obtener informacion de cocina
+      operationId: Cocina.get
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  address:
+                    type: object
+                example:
+                  name: 'cocina'
+                  address:
+                    - name: "calle"
+                    - street_name: "nombre"
+                    - interior_number: "0"
+                    - exterior_number: "0"
+                    - cp: "11111"
+                    - town: "municipio"
+                    - city: "ciudad"
+                    - country: "pais"
+                    - latitude: 19.3869751
+                    - longitude: -99.1748862
+                    - reference: "referencia"
+                    - neighborhood: "colonia"
+                    - photos: []
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/kitchens/kitchen/:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Cocina
+      summary: Obtener lista de cocinas
+      operationId: Cocina.list
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      default: cocina lolita
+                      description: nombre de la cocina
+                    id:
+                      type: integer
+                      default: 1
+                      description: id de la cocina
+                    address:
+                      type: object
+                      properties:
+                        latitude:
+                          type: string
+                          default: 1.21321312
+                          description: latitud de la direccion de la cocina
+                        longitude:
+                          type: string
+                          default: -12.12321
+                          description: longitud de la direccion de la cocina
+                        name:
+                          type: string
+                          default: Calle 1 Colonia ... Ciudad de Mexico
+                          description: direccion de la cocina
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v2/kitchens/public:
+    post:
+      tags:
+        - Cocina
+      summary: Obtener lista de cocinas con menus por latitud y longitud
+      operationId: Cocina.public_menu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  default: 19.3869751
+                  description: numero de latitud
+                longitude:
+                  type: number
+                  default: -99.1748862
+                  description: numero de la longitud
+              required:
+                - latitude
+                - longitude
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    id:
+                      type: number
+                    menu:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          name:
+                            type: string
+                          disponibility:
+                            type: string
+                          day:
+                            type: string
+                          price:
+                            type: number
+                          description:
+                            type: string
+                          selectables:
+                            type: object
+                            properties:
+                              extras:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                    stock:
+                                      type: number
+                                    price:
+                                      type: number
+                                    status:
+                                      type: string
+                                    photos:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          image:
+                                            type: string
+                                    id:
+                                      type: number
+                              selectables:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    category:
+                                      type: number
+                                    dishes:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          name:
+                                            type: string
+                                          description:
+                                            type: string
+                                          photos:
+                                            type: array
+                                            items:
+                                              type: object
+                                              properties:
+                                                image:
+                                                  type: string
+                                          stock:
+                                            type: number
+                                          status:
+                                            type: string
+                                          id:
+                                            type: number
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/menus/kitchen/:
+    post:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+      summary: Crear menus
+      operationId: Menu.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuData'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMenuData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/menus/kitchen/{menuId}/:
+    put:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+      parameters:
+      - in: path
+        name: "menuId"
+        required: true
+        schema:
+          type: number
+        description: id del Menu
+      summary: Actualizar menu
+      operationId: Menu.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuData'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMenuData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    delete:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+      parameters:
+      - in: path
+        name: "menuId"
+        required: true
+        schema:
+          type: number
+        description: id del Menu
+      summary: Eliminar menu
+      operationId: Menu.delete
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v2/menu/{kitchenId}/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+      parameters:
+        - in: path
+          name: "kitchenId"
+          required: true
+          schema:
+            type: number
+          description: id de la cocina
+        - in: query
+          name: day
+          required: false
+          schema:
+            type: string
+          description: El dia filtrar para obtener el menu (ej. "/api/v2/menu/?day=2021-01-01")
+        - in: query
+          name: id
+          required: false
+          description: El id del menu a obtener (ej. "/api/v2/menu/?id=1" )
+          schema:
+            type: number
+      summary: Obtener informacion de un menu
+      operationId: Menu.info_get
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/menu/{kitchenId}/{init_date}/{final_date}/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+      parameters:
+        - in: path
+          name: "kitchenId"
+          required: true
+          schema:
+            type: number
+          description: id de la cocina
+        - in: path
+          name: "init_date"
+          required: true
+          schema:
+            type: string
+          description: Fecha inicial a filtrar (ej. "2021-01-01") formato "YYYY-MM-DD"
+        - in: path
+          name: "final_date"
+          required: true
+          schema:
+            type: string
+          description: Fecha final a filtrar (ej. "2021-01-01") formato "YYYY-MM-DD"
+      summary: obetener lista de menus por filtrado de dia
+      operationId: Menu.list
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/menu/categories/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Category
+      summary: Lista Categorias
+      operationId: Category.list
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  count:
+                    type: number
+                    default: 1
+                    description: el numero de paginas de la respuesta
+                  next:
+                    type: string
+                    default: null
+                    description: la url de la siguiente pagina de la respuesta
+                  previous:
+                    type: string
+                    default: null
+                    description: la url previa de la pagina de la respuesta
+                  results:
+                    type: array
+                    description: lista de los resultados de la respuesta
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          default: postres
+                          description: nombre de la categoria
+                        description:
+                          type: string
+                          default: postres
+                          description: descripcion de la categoria
+                        id:
+                          type: integer
+                          default: 1
+                          description: Identificador de la categoria
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+    post:
+      security:
+          - Api-Token: []
+      tags:
+        - Category
+      summary: Crear Categorias
+      operationId: Category.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  default: agua de horchata
+                  description: nombre del complemento
+                description:
+                  type: string
+                  default: agua de horchata de almendra
+                  description: descripcion del complemento
+      responses:
+        '200':
+            description: Created
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v2/menu/categories/{categodiId}:
+    delete:
+      security:
+          - Api-Token: []
+      tags:
+        - Category
+      parameters:
+        - in: path
+          name: "categodiId"
+          description: "id de la categoria"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Eliminar Categoria
+      operationId: Category.delete
+      responses:
+        '200':
+            description: Deleted
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v2/dishes/dish/{dishId}/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Platillos
+      parameters:
+        - in: path
+          name: "dishId"
+          description: "id del platillo"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Obetner informacion del platillo
+      operationId: Platillos.info
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DishData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    delete:
+      security:
+          - Api-Token: []
+      tags:
+        - Platillos
+      parameters:
+        - in: path
+          name: "dishId"
+          description: "id del platillo"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Eliminar platillo
+      operationId: Platillos.delete
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    put:
+      security:
+          - Api-Token: []
+      tags:
+        - Platillos
+      parameters:
+        - in: path
+          name: "dishId"
+          description: "id del platillo"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: actualizar informacion del platillo
+      operationId: Platillos.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishData'
+      responses:
+        '200':
+          description: Updated
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/dishes/complement/{complementId}/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Complementos
+      parameters:
+        - in: path
+          name: "complementId"
+          description: "id del complemento"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Obetner informacion del complemento
+      operationId: Complementos.info
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplementData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    delete:
+      security:
+          - Api-Token: []
+      tags:
+        - Complementos
+      parameters:
+        - in: path
+          name: "complementId"
+          description: "id del Complemento"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Eliminar complemento
+      operationId: Complementos.delete
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    put:
+      security:
+          - Api-Token: []
+      tags:
+        - Complementos
+      parameters:
+        - in: path
+          name: "complementId"
+          description: "id del complemento"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: actualizar informacion del complemento
+      operationId: Complementos.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplementData'
+      responses:
+        '200':
+          description: Updated
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/dishes/menu/{menuId}:
+    post:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+        - Platillos
+      parameters:
+        - in: path
+          name: "menuId"
+          description: "id del menu"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Crear platillo
+      operationId: Platillos.create
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                name:
+                  type: string
+                  default: arroz con pollo
+                  description: nombre del platillo
+                description:
+                  type: string
+                  default: arroz blanco con pollo
+                  description: descripcion del platilo
+                stock:
+                  type: number
+                  default: 123
+                  description: cantidad de platillos en el stock
+                category:
+                  type: string
+                  default: guarnicion
+                  description: categoria del platillo
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/dishes/menu/{menuId}/complements/complement:
+    post:
+      security:
+          - Api-Token: []
+      tags:
+        - Menu
+        - Complementos
+      parameters:
+        - in: path
+          name: "menuId"
+          description: "id del menu"
+          required: true
+          schema:
+            type: number
+          style: simple
+      summary: Crear copmlemento
+      operationId: Complementos.create
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                name:
+                  type: string
+                  default: agua de horchata
+                  description: nombre del complemento
+                description:
+                  type: string
+                  default: agua de horchata de almendra
+                  description: descripcion del complemento
+                stock:
+                  type: number
+                  default: 123
+                  description: cantidad de complementos en el stock
+                price:
+                  type: string
+                  default: 123.0
+                  description: precio del cimplemento
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMenuData'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v2/orders/purchase/:
+    post:
+      security:
+        - Api-Token: []
+      tags:
+        - Ordenes
+      summary: Crear Ordenes
+      operationId: Ordenes.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                kitchen:
+                  type: number
+                  default: 1
+                  description: id de la cocina
+                address:
+                  type: number
+                  default: 1
+                  description: id de la direccion para la direccion
+                payment:
+                  type: number
+                  default: 1
+                  description: id del metodo de pago
+                orders:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      extra_instruccions:
+                        type: string
+                        default: sin sal
+                        description: instrucciones especiales para la orden
+                      menu_id:
+                        type: number
+                        default: 1
+                        description: id del menu de la orden
+                      extras:
+                        type: array
+                        description: complementos
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              default: 1
+                              description: id del complemento
+                            quantity:
+                              type: number
+                              default: 1
+                              description: cantidad de complementos a elegir
+                      selectables:
+                        type: array
+                        description: platillos
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              default: 1
+                              description: id del platillo
+                            quantity:
+                              type: number
+                              default: 1
+                              description: cantidad de platillos a elegir  
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v2/orders/price/:
+    post:
+      security:
+        - Api-Token: []
+      tags:
+        - Ordenes
+      summary: Obtener el precio de la orden
+      operationId: Ordeners.price
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                orders:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      menu_id:
+                        type: number
+                        default: 1
+                        description: id del menu de la orden
+                      extras:
+                        type: array
+                        description: complementos
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              default: 1
+                              description: id del complemento
+                            quantity:
+                              type: number
+                              default: 1
+                              description: cantidad de complementos a elegir
+                      selectables:
+                        type: array
+                        description: platillos
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: object
+                              default: 1
+                              description: id del platillo
+                            quantity:
+                              type: number
+                              default: 1
+                              description: cantidad de platillos a elegir 
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  price:
+                    type: string
+                    default: 342.0
+                    description: precio de la orden
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+        '404':
+          $ref : '#/components/responses/NotFound'
+  /api/v2/orders/purchases/routes/:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Ordenes
+      summary: Lista de las ordenes, ordenadas en rutas optimizadas
+      operationId: Ordenes.route_list
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  purchases:
+                    type: array
+                    description: lista de compras
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          user:
+                            type: string
+                            default: 41339ee3-09dd-461b-8f79-feb2f35cbf0c
+                            description: id del usuario que hizo la orden
+                          kitchen:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                default: cocina lolita
+                                description: nombre de la cocina
+                              latlng:
+                                type: object
+                                properties:
+                                  lat:
+                                    type: string
+                                    default: 19.41361966531528
+                                    description: latitud de la direccion de la cocina
+                                  lng:
+                                    type: string
+                                    default: -99.12111280265701
+                                    description: longitud de la direccion de la cocina
+                          orders:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                menu: 
+                                  type: string
+                                  default: menu del dia
+                                  description: nombre del menu
+                                extra_instructions:
+                                  type: string
+                                  default: sin sal
+                                  description: instrucciones extras de la orden
+                                dishes:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        default: arroz con pollo
+                                        description: nombre del platillo
+                                      description:
+                                        type: string
+                                        default: arroz blanco con pollo
+                                        description: descripcion del platilo
+                                      stock:
+                                        type: number
+                                        default: 123
+                                        description: cantidad de platillos en el stock
+                                      status:
+                                        type: string
+                                        default: active
+                                        description: estatus del platillo
+                                      photos:
+                                        type: array
+                                        items:
+                                          type: string
+                                          format: binary
+                                      id:
+                                        type: number
+                                        default: 1
+                                        description: id del platillo
+                                extras:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        default: agua de horchata
+                                        description: nombre del complemento
+                                      description:
+                                        type: string
+                                        default: agua de horchata de almendra
+                                        description: descripcion del complemento
+                                      stock:
+                                        type: number
+                                        default: 123
+                                        description: cantidad de complementos en el stock
+                                      price:
+                                        type: string
+                                        default: 123.0
+                                        description: precio del complemento
+                                      status:
+                                        type: string
+                                        default: active
+                                        description: estatus del complemento
+                                      photos:
+                                        type: array
+                                        items:
+                                          type: string
+                                          format: binary
+                                      id:
+                                        type: number
+                                        default: 1
+                                        description: id del complemento
+                          address:
+                            type: object
+                            properties:
+                              address:
+                                type: object
+                                properties:
+                                  street_name:
+                                    type: string
+                                    default: calle
+                                    description: nombre de la calle de la direccion de la cocina
+                                  interior_number:
+                                    type: string
+                                    default: A
+                                    description: numero interior de la direccion de la cocina
+                                  exterior_number:
+                                    type: string
+                                    default: 1
+                                    description: numero exterior de la direccion de la cocina
+                                  cp:
+                                    type: string
+                                    default: 15010
+                                    description: codigo postal de la direccion de la cocina
+                                  reference:
+                                    type: string
+                                    default: referencia
+                                    description: referencia de la direccion de la cocina
+                              latlng:
+                                type: object
+                                properties:
+                                  lat:
+                                    type: string
+                                    default: 19.41361966531528
+                                    description: latitud de la direccion de la cocina
+                                  lng:
+                                    type: string
+                                    default: -99.12111280265701
+                                    description: longitud de la direccion de la cocina
+                          price:
+                            type: string
+                            default: 171.00
+                            description: precio de la orden
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/payments/list:
+    get:
+      security:
+        - Api-Token: []
+      tags:
+        - Pagos
+        - Usuarios
+      summary: Lista de los metodos de pagos disponibles del usuario
+      operationId: Pagos.list
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    is_cash:
+                      type: boolean
+                      default: false
+                      description: indicador para saber si es efectivo o no
+                    payment_account:
+                      type: object
+                      properties:
+                        last_four:
+                          type: string
+                          default: 4242
+                          description: ultimos cuatro digitops de la tarjeta
+                        is_prefered:
+                          type: boolean
+                          default: true
+                          description: indicador que dice si es el metodo de pago de preferencia
+                        name:
+                          type: string
+                          default: la mamalona\
+                          description: nombre del metodo de pago
+                        id:
+                          type: number
+                          default: 1
+                          description: id del metodo de pago
+                        exp_month:
+                          type: string
+                          default: 1
+                          description: mes de expiracion de la tarjeta
+                        exp_year:
+                          type: string
+                          default: 2024
+                          description: año de expiracion de la tarjeta
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/payments/{paymentId}/:
+    get:
+      security:
+          - Api-Token: []
+      tags:
+        - Usuarios
+        - Pagos
+      parameters:
+        - in: path
+          name: "paymentId"
+          description: "id del metodo de pago"
+          required: true
+          schema:
+            type: number
+          style: simple 
+      summary: Informacion del metodo de pago
+      operationId: Pagos.info
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  last_four:
+                    type: string
+                    default: 4242
+                    description: ultimos cuatro digitops de la tarjeta
+                  is_prefered:
+                    type: boolean
+                    default: true
+                    description: indicador que dice si es el metodo de pago de preferencia
+                  name:
+                    type: string
+                    default: la mamalona\
+                    description: nombre del metodo de pago
+                  id:
+                    type: number
+                    default: 1
+                    description: id del metodo de pago
+                  exp_month:
+                    type: string
+                    default: 1
+                    description: mes de expiracion de la tarjeta
+                  exp_year:
+                    type: string
+                    default: 2024
+                    description: año de expiracion de la tarjeta
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref : '#/components/responses/NotFound'
+    delete:
+      security:
+          - Api-Token: []
+      tags:
+        - Usuarios
+        - Pagos
+      parameters:
+        - in: path
+          name: "paymentId"
+          description: "id del metodo de pago"
+          required: true
+          schema:
+            type: number
+          style: simple 
+      summary: Eliminar el metodo de pago
+      operationId: Pagos.delete
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbiden'
+  /api/v1/payments/:
+    post:
+      security:
+          - Api-Token: []
+      tags:
+        - Usuarios
+        - Pagos
+      summary: Crear metodo de pago
+      operationId: Pagos.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                last_four:
+                  type: string
+                  default: 4242
+                  description: ultimos cuatro digitops de la tarjeta
+                is_prefered:
+                  type: boolean
+                  default: true
+                  description: indicador que dice si es el metodo de pago de preferencia
+                name:
+                  type: string
+                  default: la mamalona\
+                  description: nombre del metodo de pago
+                id:
+                  type: number
+                  default: 1
+                  description: id del metodo de pago
+                exp_month:
+                  type: string
+                  default: 1
+                  description: mes de expiracion de la tarjeta
+                exp_year:
+                  type: string
+                  default: 2024
+                  description: año de expiracion de la tarjeta
+                token:
+                  type: string
+                  default: visa_fdsfds43gffds
+                  description: id del metodo de pago de la pasarela de pagos
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Successful:
+      description: Successful operation
+      headers:
+        X-Rate-Limit:
+          description: Calls per hour allowed by the user
+          schema:
+            type: integer
+            format: int32
+        X-RateLimit-Remaining:
+          description: Calls per hour Remaining
+          schema:
+            type: integer
+            format: int32
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    Validator:
+      description: Validator
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageError'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageError'
+    Forbiden:
+      description: Forbiden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageError'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    CreateMenuData:
+      type: object
+      properties:
+        name:
+          type: string
+          default: menu del dia
+          description: nombre del menu
+        day:
+          type: string
+          default: "2020-01-25"
+          description: fecha de disponibilidad del menu
+        price:
+          type: string
+          default: 123.0
+          description: precio del menu
+        description:
+          type: string
+          default: descripcion del menu
+          description: descripcion del menu
+        kitchen:
+          type: number
+          default: 1
+          description: id de la cocina a la cual crear menu
+    MenuData:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            default: menu del dia
+            description: nombre del menu del dia
+          disponibility:
+            type: string
+            default: 2021-01-25T22:14:31-0600
+            description: disponibilidad del menu
+          day:
+            type: string
+            default: "2020-01-25"
+            description: dia del menu
+          price:
+            type: string
+            default: 123.0
+            description: precio del menu
+          description:
+            type: string
+            default: descripcion
+            description: descripcion del menu
+          selectables:
+            type: object
+            properties:
+              extras:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      default: agua de horchata
+                    description:
+                      type: string
+                      default: agua de hoarchata de almendra
+                      description: nombre del complemento
+                    stock:
+                      type: number
+                      default: 1
+                      description: cantidad de stock del complemento
+                    price:
+                      type: string
+                      default: 123.0
+                      description: precio del complemento
+                    status:
+                      type: string
+                      default: active
+                      description: status del complemento
+                    photos:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          image:
+                            type: string
+                            default: https://cdn2.cocinadelirante.com/aguadehorchatadelamichoacana.jpg
+                    id:
+                      type: number
+                      default: 1
+                      description: id del complemento
+              selectables:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    category:
+                      type: number
+                      default: guisado
+                      description: categoria del platillo
+                    dishes:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            default: arroz con pollo
+                            description: nombre del platillo
+                          description:
+                            type: string
+                            default: azzoz blanco con pollo
+                            description: descripcion del platillo
+                          photos:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                image:
+                                  type: string
+                                  default: https://www.laylita.com/Arroz-con-pollo-desmenuzado.jpg
+                          stock:
+                            type: number
+                            default: 1
+                            description: cantidad de platillos en stock
+                          status:
+                            type: string
+                            default: active
+                            description: status del platillo
+                          id:
+                            type: number
+                            default: 1
+                            description: id del platillo
+    KitchenData:
+      type: object
+      properties:
+        kitchen_name:
+          type: string
+          default: cocina lola
+          description: nombre de la cocina
+        street_name:
+          type: string
+          default: calle
+          description: nombre de la calle de la direccion de la cocina
+        interior_number:
+          type: string
+          default: A
+          description: numero interior de la direccion de la cocina
+        exterior_number:
+          type: string
+          default: 1
+          description: numero exterior de la direccion de la cocina
+        cp:
+          type: string
+          default: 15010
+          description: codigo postal de la direccion de la cocina
+        neighborhood:
+          type: string
+          default: colonia
+          description: colonia de la direccion de la cocina
+        town:
+          type: string
+          default: delagacion o municipio
+          description: delegacion o municipio de la direccion de la cocina
+        city:
+          type: string
+          default: ciudad 
+          description: ciudad de la direccion de la cocina
+        country:
+          type: string
+          default: pais
+          description: pais de la direccion de la cocina
+        latitude:
+          type: string
+          default: 1.21321312
+          description: latitud de la direccion de la cocina
+        longitude:
+          type: string
+          default: -12.12321
+          description: longitud de la direccion de la cocina
+        reference:
+          type: string
+          default: referencia
+          description: referencia de la direccion de la cocina
+    AuthData:
+      type: object
+      properties:
+        refresh:
+          type: string
+        access:
+          type: string
+    StaffUserData:
+      type: object
+      properties:
+        first_name:
+          type: string
+          default: samuel
+          description: el nombre del usuario staff
+        last_name:
+          type: string
+          default: garcia
+          description: el apellido del usuario staff
+        email:
+          type: string
+          default: correo@gmail.com
+          description: el correo electronico del usuario staff
+        phone:
+          type: string
+          default: 5555555555
+          description: el numero de telefono del usuario staff
+        id:
+          type: string
+          default: fdsajopfsjaop32423
+          description: el id del usuario staff
+    UserData:
+      type: object
+      properties:
+        username:
+          type: string
+          default: username
+          description: Nombre de usuario
+        password:
+          type: string
+          default: password
+          description: Contraseña del usuario
+        first_name:
+          type: string
+          default: nombre
+          description: Nombre(s) del usuario
+        email:
+          type: string
+          default: correo@gmail.com
+          description: Correo del usuario
+        phone:
+          type: number
+          default: 5555555555
+          description: Numero de telefono
+    DishData:
+      type: object
+      properties:
+        name:
+          type: string
+          default: arroz con pollo
+          description: nombre del platillo
+        description:
+          type: string
+          default: arroz blanco con pollo
+          description: descripcion del platilo
+        status:
+          type: string
+          default: active
+          description: estatus del platillo
+        stock:
+          type: number
+          default: 123
+          description: cantidad de platillos en el stock
+        category:
+          type: string
+          default: guarnicion
+          description: categoria del platillo
+        photos:
+          type: array
+          items:
+            type: string
+            format: binary
+    ComplementData:
+      type: object
+      properties:
+        name:
+          type: string
+          default: arroz con pollo
+          description: nombre del complemento
+        description:
+          type: string
+          default: arroz blanco con complemento
+          description: descripcion del complemento
+        stock:
+          type: number
+          default: 123
+          description: cantidad de complementos en el stock
+        price:
+          type: number
+          default: 123.1
+          description: precio del complemento
+        status:
+          type: string
+          default: active
+          description: estatus del complemento
+        photos:
+          type: array
+          items:
+            type: string
+            format: binary
+    Message:
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+      example:
+        success: 'true,'
+        message: Successful
+        data: {}
+    MessageError:
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            type: string
+      example:
+        message: error
+        data:
+          - error: "error"
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  securitySchemes:
+    Api-Token:
+      type: apiKey
+      in: header
+      name: JWT

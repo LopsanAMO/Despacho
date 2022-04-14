@@ -21,7 +21,7 @@ oauthlib==2.0.6
 psycopg2==2.7.4
 psycopg2-binary==2.7.4
 pudb==2017.1.4
-Pygments==2.2.0
+Pygments==2.7.4
 PyJWT==1.6.0
 python-dateutil==2.6.1
 python3-openid==3.1.0
